@@ -1,0 +1,24 @@
+apps{storage,
+     report,
+     order,
+     product,
+     user
+     }
+
+model{
+    user(phone, first_name, last_name, password, company_id)
+    company(name)
+    category(name)
+    product(name, measure_type, category_id, company_id)
+    product_detail(product_id, price, quantity, type)?
+    order(order_type, start_date, deadline, client_id, unpaid_portion)
+    order_detail(product_id, order_id, price, quantity)
+    storage(product_id, rest, total_price, last_price)
+    client(name, type),
+    }
+report {
+    har bitta mahsulot nomi,
+    belgilangan vaqt ichida nechta sotilgani,
+    opshi nech pulga sotgani,
+    opshi nech pulga tushgani
+}
