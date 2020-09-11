@@ -51,7 +51,6 @@ class CategoryList(APIView):
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class CompanyList(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

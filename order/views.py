@@ -1,14 +1,14 @@
 from datetime import datetime
 
-from rest_framework import generics, status
+from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db import transaction
 
-from order.models import Order, Order_detail, Client
-from order.serializers import OrderSerializer, OrderDetailSerializer, ClientSerializer, OrderItemSerializer
+from order.models import Client
+from order.serializers import OrderSerializer, OrderDetailSerializer, OrderItemSerializer
 from product.models import Product
 from storage.models import Storage
 
@@ -64,14 +64,14 @@ class GetOrder(APIView):
             if client_name:
                 try:
                     if buying:
-                        client = Client.objects.get(name=client_name, company=company, type='selling')
+                        client = Client.objects.get(name=client_name, company_id=company, type='selling')
                     else:
-                        client = Client.objects.get(name=client_name, company=company, type='buying')
+                        client = Client.objects.get(name=client_name, company_id=company, type='buying')
                 except Client.DoesNotExist:
                     if buying:
-                        client = Client.objects.create(name=client_name, company=company, type='selling')
+                        client = Client.objects.create(name=client_name, company_id=company, type='selling')
                     else:
-                        client = Client.objects.create(name=client_name, company=company, type='buying')
+                        client = Client.objects.create(name=client_name, company_id=company, type='buying')
                 if buying:
                     data = {'order_types': 'buying', 'deadline': deadline, 'client': client.id,
                             'unpaid_portion': unpaid_portion, 'company': company}
@@ -88,10 +88,10 @@ class GetOrder(APIView):
             # creating order
             serializer = OrderSerializer(data=data)
             if serializer.is_valid():
-                serializer.save()
+                order = serializer.save()
             # creating orderItems with order id
-            order_id = serializer.data['id']
             order_serializer_items = []
+            order_id = order.id
             for orderItem in orderItems:
                 data = {'product': orderItem["product_id"], 'order': order_id, 'price': orderItem["price"],
                         'quantity': orderItem["quantity"]}
